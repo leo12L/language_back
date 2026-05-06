@@ -3,14 +3,14 @@ const router = express.Router();
 
 const{
     getUsers,
-    getUserById,
     createUser,
-    deleteUser
+    loginUser
+
 } = require('../controllers/users');
 
 router.get('/', getUsers);
-router.get('/:id', getUserById);
 router.post('/', createUser);
-router.delete('/:id', deleteUser)
+router.post('/login', loginUser)
+
 console.log('cargando controllers');
 module.exports = router;
