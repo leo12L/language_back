@@ -1,4 +1,3 @@
-console.log('inicio del archivo');
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -41,7 +40,7 @@ const createUser = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, 10);
 
         const[result] = await db.query(
-            "INSERT INTO users (name, last_name, email, password) Values (?,?,?,?)", [name, last_name, email, passwordHash]
+            "INSERT INTO users (name, last_name, email, password) VALUES (?,?,?,?)", [name, last_name, email, passwordHash]
         );
 
         

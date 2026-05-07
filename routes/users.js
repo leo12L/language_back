@@ -12,5 +12,5 @@ router.get('/', getUsers);
 router.post('/', createUser);
 router.post('/login', loginUser)
 
-console.log('cargando controllers');
+
 module.exports = router;
