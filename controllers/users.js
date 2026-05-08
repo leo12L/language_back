@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { generateToken } = require('../config/token');
 
 const getUsers = async (req, res) => {
     try {
@@ -21,7 +22,8 @@ const createUser = async (req, res) => {
         console.log('body recibido:', req.body);
         const { name, last_name, email, password } = req.body;
 
-        if (!name || name.trim() === '' || !last_name || last_name.trim() === '' || !email || email.trim() === '' || !password || password.trim() === '') {
+        if (!name || name.trim() === '' || !last_name || last_name.trim() === '' || !email || email.trim() === '' || !password || password.trim() === '')
+            {
             return res.status(400).json({
                 error: 'Todo los campos son obligatorios'
             })
@@ -65,6 +67,7 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) =>{
     try{
         const {email, password} = req.body;
+         console.log('Body recibido:', { email, password });
 
         if(!email || !password){
             return res.status(400).json({
@@ -77,16 +80,20 @@ const loginUser = async (req, res) =>{
             'SELECT * FROM users WHERE email = ?',
             [email]
         )
+         console.log('Usuario encontrado:', user); 
 
         if(user.length === 0){
             return res.status(401).json({
                 error: 'Credenciales incorrectas'
             })
         }
+        
 
-        const useer = user[0];
-
-        const passwordOk = await bcrypt.compare(password, useer.password);
+        const key = user[0];
+        console.log(bcrypt.compare(password, key.password))
+        const passwordOk = await bcrypt.compare(password, key.password);
+         
+        console.log('Password ok:', passwordOk);
 
         if(!passwordOk){
             return res.status(401).json({
@@ -94,24 +101,16 @@ const loginUser = async (req, res) =>{
             });
         }
 
-        const token = jwt.sign(
-            {
-                id: useer.id,
-                email: useer.email
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: '1h'
-            }
-        )
+        
+        const token = generateToken({id:key.id_users, email: key.email})
 
         res.json({
             message: 'Login correcto',
             token,
             users:{
-                id: useer.id,
-                name: useer.name,
-                email: useer.email
+                id: key.id,
+                name: key.name,
+                email: key.email
             }
         })
     }

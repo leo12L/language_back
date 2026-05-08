@@ -6,9 +6,10 @@ const{
     creatProfile
 
 } = require('../controllers/profile');
+const { authMiddleware } = require('../config/authMiddleware');
 
-router.get('/', getProfile);
-router.post('/', creatProfile)
+router.get('/',getProfile);
+router.post('/', authMiddleware ,creatProfile)
 
 console.log('cargando controllers');
 module.exports = router;
