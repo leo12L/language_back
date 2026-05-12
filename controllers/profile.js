@@ -25,13 +25,12 @@ const creatProfile = async (req, res) => {
         const user_id = req.user.id
 
 
-        const { motivation, languages_learning, languages_native, streak } = req.body;
+        const {languages_learning, languages_native } = req.body;
 
         if (
-            !motivation || motivation.trim() === '' ||
             allowedLanguages.includes(languages_learning) ||
-            allowedLanguages.includes(languages_native) ||
-            !streak) {
+            allowedLanguages.includes(languages_native) 
+            ) {
             return res.status(400).json({
                 error: 'Todo los campos son obligatorios'
             })
@@ -39,20 +38,18 @@ const creatProfile = async (req, res) => {
 
 
         
-
+       
         const [result] = await db.query(
-            "INSERT INTO learning_profile (motivation, language_learning, language_native, streak, users_id) VALUES (?,?,?,?,?)",
-            [motivation, languages_learning, languages_native, streak, user_id]
+            "INSERT INTO learning_profile ( language_learning, language_native, users_id) VALUES (?,?,?)",
+            [languages_learning, languages_native, user_id]
         )
 
         res.status(201).json({
             message: 'Perfil creado correctamente',
             learning_profile: {
                 id: result.insertId,
-                motivation,
                 languages_learning,
                 languages_native,
-                streak,
                 user_id
             }
         })

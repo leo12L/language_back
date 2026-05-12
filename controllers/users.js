@@ -45,9 +45,20 @@ const createUser = async (req, res) => {
             "INSERT INTO users (name, last_name, email, password) VALUES (?,?,?,?)", [name, last_name, email, passwordHash]
         );
 
-        
+
+        const[user] = await db.query(
+            'SELECT * FROM users WHERE email = ?',
+            [email]
+        )
+
+
+        const key = user[0]
+
+        const token = generateToken({id:key.id_users, email: key.email})
+
         res.status(201).json({
             message: 'Usuario registrado correctamente',
+            token,
             users:{
                 id:result.insertId,
                 name,
@@ -121,9 +132,6 @@ const loginUser = async (req, res) =>{
         })
     }
 }
-
-
-
 
 module.exports = {
     getUsers,
