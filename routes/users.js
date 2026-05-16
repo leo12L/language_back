@@ -8,8 +8,9 @@ const{
 
 } = require('../controllers/users');
 
+
 router.get('/', getUsers);
-router.post('/', createUser);
+router.post('/createUser', createUser);
 router.post('/login', loginUser)
 
 

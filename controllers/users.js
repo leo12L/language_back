@@ -19,7 +19,6 @@ const getUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        console.log('body recibido:', req.body);
         const { name, last_name, email, password } = req.body;
 
         if (!name || name.trim() === '' || !last_name || last_name.trim() === '' || !email || email.trim() === '' || !password || password.trim() === '')
@@ -39,22 +38,17 @@ const createUser = async (req, res) => {
                 error: 'el email ya esta registrado'
             })
         }
+
         const passwordHash = await bcrypt.hash(password, 10);
 
         const[result] = await db.query(
-            "INSERT INTO users (name, last_name, email, password) VALUES (?,?,?,?)", [name, last_name, email, passwordHash]
+            "INSERT INTO users (name, last_name, email, password) VALUES (?,?,?,?)", 
+                                [name, last_name, email, passwordHash]
         );
+        
+        
 
-
-        const[user] = await db.query(
-            'SELECT * FROM users WHERE email = ?',
-            [email]
-        )
-
-
-        const key = user[0]
-
-        const token = generateToken({id:key.id_users, email: key.email})
+        const token = generateToken({id:result.id_users, email: result.email})
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
@@ -87,24 +81,25 @@ const loginUser = async (req, res) =>{
         }
 
 
-        const[user] = await db.query(
+        const [existingUser] = await db.query(
             'SELECT * FROM users WHERE email = ?',
             [email]
         )
-         console.log('Usuario encontrado:', user); 
 
-        if(user.length === 0){
+         console.log('Usuario encontrado:', existingUser); 
+
+        if(existingUser.length === 0){
             return res.status(401).json({
                 error: 'Credenciales incorrectas'
             })
         }
         
 
-        const key = user[0];
-        console.log(bcrypt.compare(password, key.password))
-        const passwordOk = await bcrypt.compare(password, key.password);
+        console.log(bcrypt.compare(password, existingUser.password))
+
+        const passwordOk = await bcrypt.compare(password, existingUser.password);
          
-        console.log('Password ok:', passwordOk);
+        console.log('UserControll-Password ok:', passwordOk);
 
         if(!passwordOk){
             return res.status(401).json({
