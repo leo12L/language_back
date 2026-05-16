@@ -3,13 +3,13 @@ const router = express.Router();
 
 const{
     getProfile,
-    creatProfile
-
+    createProfile
 } = require('../controllers/profile');
+
 const { authMiddleware } = require('../config/authMiddleware');
 
-router.get('/' ,getProfile);
-router.post('/', authMiddleware ,creatProfile)
+router.get('/get_profile' ,getProfile);
+router.post('/create_profile', authMiddleware ,createProfile)
 
-console.log('cargando controllers');
+
 module.exports = router;

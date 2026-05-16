@@ -1,8 +1,6 @@
 const { authMiddleware } = require('../config/authMiddleware');
 const db = require('../config/db');
 
-
-
 const getProfile = async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM learning_profile');
@@ -17,40 +15,39 @@ const getProfile = async (req, res) => {
 }
 
 
-const creatProfile = async (req, res) => {
+const createProfile = async (req, res) => {
     try {
-        const allowedLanguages = ["ESP, EN"]
+        const allowedLanguages = ["ESP", "EN"]
+                
+        const users_id = req.user.id 
         
-        
-        const user_id = req.user.id
 
-
-        const {languages_learning, languages_native } = req.body;
+        const { language_learning, language_native } = req.body;
 
         if (
-            allowedLanguages.includes(languages_learning) ||
-            allowedLanguages.includes(languages_native) 
-            ) {
+            !allowedLanguages.includes(language_learning) ||
+            !allowedLanguages.includes(language_native)
+        ) {
             return res.status(400).json({
                 error: 'Todo los campos son obligatorios'
             })
         }
 
-
-        
-       
         const [result] = await db.query(
             "INSERT INTO learning_profile ( language_learning, language_native, users_id) VALUES (?,?,?)",
-            [languages_learning, languages_native, user_id]
+            [language_learning, language_native, users_id]
         )
+
+        
+
 
         res.status(201).json({
             message: 'Perfil creado correctamente',
             learning_profile: {
                 id: result.insertId,
-                languages_learning,
-                languages_native,
-                user_id
+                language_learning,
+                language_native,
+                users_id
             }
         })
 
@@ -67,5 +64,6 @@ const creatProfile = async (req, res) => {
 
 module.exports = {
     getProfile,
-    creatProfile
+    createProfile,
+
 }
