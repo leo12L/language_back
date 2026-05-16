@@ -84,9 +84,7 @@ const loginUser = async (req, res) =>{
             'SELECT * FROM users WHERE email = ?',
             [email]
         )
-
-         console.log('Usuario encontrado:', existingUser); 
-
+ 
         if(existingUser.length === 0){
             return res.status(401).json({
                 error: 'Credenciales incorrectas'
@@ -107,13 +105,13 @@ const loginUser = async (req, res) =>{
             });
         }
 
-        const token = generateToken({id:key.id, email: key.email})
+        const token = generateToken({id:key.id_users, email: key.email})
 
         res.json({
             message: 'Login correcto',
             token,
-            users:{
-                id: key.id,
+            user:{
+                id: key.id_users,
                 name: key.name,
                 email: key.email
             }

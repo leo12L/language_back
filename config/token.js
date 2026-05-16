@@ -12,18 +12,9 @@ const generateToken = (user) =>
     );
 
 
-const verifyToken =(generateToken)=>{
-    try{
-        jwt.verify(generateToken, envs.SECRET_PASSWORD_KEY)
-        return true
-    }
-    catch(error){
-        return false
-    }
-}
+
 
 
 module.exports = {
-    generateToken,
-    verifyToken  
+    generateToken
 }
