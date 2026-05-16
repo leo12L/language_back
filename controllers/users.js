@@ -48,11 +48,10 @@ const createUser = async (req, res) => {
         
         
 
-        const token = generateToken({id:result.id_users, email: result.email})
+        
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
-            token,
             users:{
                 id:result.insertId,
                 name,
@@ -94,11 +93,12 @@ const loginUser = async (req, res) =>{
             })
         }
         
+        const key = existingUser[0];
 
-        console.log(bcrypt.compare(password, existingUser.password))
-
-        const passwordOk = await bcrypt.compare(password, existingUser.password);
+        const passwordOk = await bcrypt.compare(password, key.password);
          
+        
+
         console.log('UserControll-Password ok:', passwordOk);
 
         if(!passwordOk){
@@ -107,8 +107,7 @@ const loginUser = async (req, res) =>{
             });
         }
 
-        
-        const token = generateToken({id:key.id_users, email: key.email})
+        const token = generateToken({id:key.id, email: key.email})
 
         res.json({
             message: 'Login correcto',
